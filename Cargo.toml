@@ -1,0 +1,41 @@
+[workspace]
+members = ["crates/phew-core"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.98.1"
+
+[package]
+name = "phew"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["kafka"]
+kafka = ["dep:rskafka"]
+hydro = ["dep:hydro_lang"]
+hydro-sim = ["hydro", "hydro_lang/sim"]
+
+[dependencies]
+phew-core = { path = "crates/phew-core" }
+tokio = { version = "~1.54", features = ["rt-multi-thread", "macros", "sync", "time", "signal", "net"] }
+moka = { version = "~0.12", features = ["future"] }
+zstd = { version = "~0.14", default-features = false }
+redb = "~4.4"
+postcard = { version = "~1.1", default-features = false, features = ["use-std"] }
+serde = { version = "1", features = ["derive"] }
+hydro_lang = { version = "=0.17.0-alpha.6", optional = true, default-features = false, features = ["build", "embedded_runtime", "tokio"] }
+# Compression codecs can be enabled when the transport implementation needs them.
+rskafka = { version = "~0.6", optional = true, default-features = false }
+axum = { version = "~0.8", default-features = false, features = ["http1", "json", "tokio", "tracing"] }
+reqwest = { version = "~0.13", default-features = false, features = ["json", "rustls"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+metrics = "0.24"
+metrics-exporter-prometheus = { version = "0.18", default-features = false }
+
+[dev-dependencies]
+proptest = "1"
+criterion = { version = "0.8", default-features = false, features = ["cargo_bench_support", "async_tokio"] }
